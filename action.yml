@@ -1,23 +1,25 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Setup VCPKG'
+description: 'Setup VCPKG'
+author: 'Jared Irwin'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: 'heart'
-  color: 'red'
+  icon: 'code'
+  color: 'purple'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  vcpkg-root:
+    description: 'Location of vcpkg'
     required: true
-    default: '1000'
-
-# Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
+  use-cache:
+    description: 'Use Actions cache'
+    default: 'true'
+  preinstall-dependencies:
+    description: 'Install dependencies for project'
+    default: 'false'
+  install-location:
+    description: 'Location to install dependencies'
 
 runs:
   using: node20
