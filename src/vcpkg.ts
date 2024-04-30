@@ -37,9 +37,11 @@ export default class Vcpkg {
   }
 
   static async create(): Promise<Vcpkg> {
+    core.startGroup('Setup')
     const root = getRoot()
     const bin = getBin(root)
     const version = await getVersion(bin)
+    core.endGroup()
     return new Vcpkg(root, bin, version)
   }
 }

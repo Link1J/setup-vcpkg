@@ -14,8 +14,6 @@ export async function run(): Promise<void> {
     const vcpkg = await Vcpkg.create()
     const install_options = ['--no-print-usage', '--clean-after-build']
 
-    core.exportVariable('VCPKG_ROOT', vcpkg.root)
-
     if (vcpkg.root !== process.env.VCPKG_INSTALLATION_ROOT) {
       await bootstrap(vcpkg.root)
     }
@@ -26,6 +24,7 @@ export async function run(): Promise<void> {
       await install(vcpkg.bin, install_options)
     }
 
+    core.exportVariable('VCPKG_ROOT', vcpkg.root)
     core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options)
 
     core.setOutput(

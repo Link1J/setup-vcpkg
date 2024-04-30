@@ -26351,7 +26351,6 @@ async function run() {
     try {
         const vcpkg = await vcpkg_1.default.create();
         const install_options = ['--no-print-usage', '--clean-after-build'];
-        core.exportVariable('VCPKG_ROOT', vcpkg.root);
         if (vcpkg.root !== process.env.VCPKG_INSTALLATION_ROOT) {
             await (0, bootstrap_1.bootstrap)(vcpkg.root);
         }
@@ -26361,6 +26360,7 @@ async function run() {
         if (core.getBooleanInput('install-dependencies')) {
             await (0, install_1.install)(vcpkg.bin, install_options);
         }
+        core.exportVariable('VCPKG_ROOT', vcpkg.root);
         core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options);
         core.setOutput('toolchain-file', `${vcpkg.root}/scripts/buildsystems/vcpkg.cmake`);
         core.setOutput('vcpkg-install-options', install_options);
@@ -26439,9 +26439,11 @@ class Vcpkg {
         this.version = version;
     }
     static async create() {
+        core.startGroup('Setup');
         const root = getRoot();
         const bin = getBin(root);
         const version = await getVersion(bin);
+        core.endGroup();
         return new Vcpkg(root, bin, version);
     }
 }
