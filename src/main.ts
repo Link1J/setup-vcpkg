@@ -1,6 +1,9 @@
 import * as core from '@actions/core'
+
 import { bootstrap } from './bootstrap'
 import { install } from './install'
+import { cache } from './cache'
+import Vcpkg from './vcpkg'
 
 /**
  * The main function for the action.
@@ -8,42 +11,26 @@ import { install } from './install'
  */
 export async function run(): Promise<void> {
   try {
-    const vcpkg_root = (() => {
-      let out = core.getInput('vcpkg-root')
-      if (out.length !== 0) return out
-      out = process.env.VCPKG_INSTALLATION_ROOT || ''
-      if (out.length !== 0) return out
-      throw new Error('Could not find a valid VCPKG_ROOT')
-    })()
-    let install_options = ['--no-print-usage']
+    const vcpkg = await Vcpkg.create()
+    const install_options = ['--no-print-usage', '--clean-after-build']
 
-    // if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
-    bootstrap(vcpkg_root)
-    // }
+    core.exportVariable('VCPKG_ROOT', vcpkg.root)
+
+    if (vcpkg.root !== process.env.VCPKG_INSTALLATION_ROOT) {
+      await bootstrap(vcpkg.root)
+    }
     if (core.getBooleanInput('use-cache')) {
-      core.exportVariable(
-        'ACTIONS_CACHE_URL',
-        process.env.ACTIONS_CACHE_URL || ''
-      )
-      core.exportVariable(
-        'ACTIONS_RUNTIME_TOKEN',
-        process.env.ACTIONS_RUNTIME_TOKEN || ''
-      )
-      install_options = [
-        ...install_options,
-        '--binarysource="clear;x-gha,readwrite;default,readwrite"'
-      ]
+      await cache(vcpkg.version)
     }
     if (core.getBooleanInput('install-dependencies')) {
-      install(vcpkg_root, install_options)
+      await install(vcpkg.bin, install_options)
     }
 
-    core.exportVariable('VCPKG_ROOT', vcpkg_root)
     core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options)
 
     core.setOutput(
       'toolchain-file',
-      `${vcpkg_root}/scripts/buildsystems/vcpkg.cmake`
+      `${vcpkg.root}/scripts/buildsystems/vcpkg.cmake`
     )
     core.setOutput('vcpkg-install-options', install_options)
   } catch (error) {

@@ -26193,16 +26193,63 @@ const os_1 = __importDefault(__nccwpck_require__(2037));
  */
 async function bootstrap(vcpkg_root) {
     core.startGroup('Bootstrap');
-    let ext = '.sh';
-    if (os_1.default.platform() === 'win32') {
-        ext = '.bat';
-    }
-    exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics'], {
-        listeners: { stdline: buffer => core.info(buffer) }
-    });
+    const ext = os_1.default.platform() === 'win32' ? '.bat' : '.sh';
+    await exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics']);
     core.endGroup();
 }
 exports.bootstrap = bootstrap;
+
+
+/***/ }),
+
+/***/ 4810:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.cache = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+/**
+ * The main function for the action.
+ * @returns {Promise<void>} Resolves when the action is complete.
+ */
+async function cache(vcpkg_version) {
+    core.startGroup('Cache');
+    if (vcpkg_version < new Date('2023-03-29')) {
+        core.warning('The version of Vcpkg in use does not support Github Actions cache');
+    }
+    else {
+        core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+        core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+        core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite');
+    }
+    core.endGroup();
+}
+exports.cache = cache;
 
 
 /***/ }),
@@ -26235,32 +26282,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.install = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
-const os_1 = __importDefault(__nccwpck_require__(2037));
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
-async function install(vcpkg_root, args) {
+async function install(vcpkg_bin, args) {
     core.startGroup('Install Dependencies');
     let extraArgs = [];
     const installLocation = core.getInput('install-location');
     if (installLocation.length !== 0) {
         extraArgs = [...extraArgs, `--x-install-root="${installLocation}"`];
     }
-    let ext = '';
-    if (os_1.default.platform() === 'win32') {
-        ext = '.exe';
-    }
-    exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, ...extraArgs], {
-        listeners: { stdline: buffer => core.info(buffer) }
-    });
+    await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs]);
     core.endGroup();
 }
 exports.install = install;
@@ -26296,44 +26333,36 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const bootstrap_1 = __nccwpck_require__(9996);
 const install_1 = __nccwpck_require__(1649);
+const cache_1 = __nccwpck_require__(4810);
+const vcpkg_1 = __importDefault(__nccwpck_require__(7297));
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
     try {
-        const vcpkg_root = (() => {
-            let out = core.getInput('vcpkg-root');
-            if (out.length !== 0)
-                return out;
-            out = process.env.VCPKG_INSTALLATION_ROOT || '';
-            if (out.length !== 0)
-                return out;
-            throw new Error('Could not find a valid VCPKG_ROOT');
-        })();
-        let install_options = ['--no-print-usage'];
-        // if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
-        (0, bootstrap_1.bootstrap)(vcpkg_root);
-        // }
+        const vcpkg = await vcpkg_1.default.create();
+        const install_options = ['--no-print-usage', '--clean-after-build'];
+        core.exportVariable('VCPKG_ROOT', vcpkg.root);
+        if (vcpkg.root !== process.env.VCPKG_INSTALLATION_ROOT) {
+            await (0, bootstrap_1.bootstrap)(vcpkg.root);
+        }
         if (core.getBooleanInput('use-cache')) {
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            install_options = [
-                ...install_options,
-                '--binarysource="clear;x-gha,readwrite;default,readwrite"'
-            ];
+            await (0, cache_1.cache)(vcpkg.version);
         }
         if (core.getBooleanInput('install-dependencies')) {
-            (0, install_1.install)(vcpkg_root, install_options);
+            await (0, install_1.install)(vcpkg.bin, install_options);
         }
-        core.exportVariable('VCPKG_ROOT', vcpkg_root);
         core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options);
-        core.setOutput('toolchain-file', `${vcpkg_root}/scripts/buildsystems/vcpkg.cmake`);
+        core.setOutput('toolchain-file', `${vcpkg.root}/scripts/buildsystems/vcpkg.cmake`);
         core.setOutput('vcpkg-install-options', install_options);
     }
     catch (error) {
@@ -26343,6 +26372,80 @@ async function run() {
     }
 }
 exports.run = run;
+
+
+/***/ }),
+
+/***/ 7297:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const core = __importStar(__nccwpck_require__(2186));
+const exec = __importStar(__nccwpck_require__(1514));
+const os_1 = __importDefault(__nccwpck_require__(2037));
+function getRoot() {
+    let out = core.getInput('vcpkg-root');
+    if (out.length !== 0)
+        return out;
+    out = process.env.VCPKG_INSTALLATION_ROOT || '';
+    if (out.length !== 0)
+        return out;
+    throw new Error('Could not find a valid VCPKG_ROOT');
+}
+function getBin(root) {
+    const ext = os_1.default.platform() === 'win32' ? '.exe' : '';
+    return `${root}/vcpkg${ext}`;
+}
+async function getVersion(bin) {
+    const output = await exec.getExecOutput(bin, ['--version']);
+    const data = output.stdout.match(/(?<date>\d{2,4}-\d{2,4}-\d{2,4})-(?<hash>[0123456789ABCDEFabcdef]+)/);
+    return new Date(data === null || data.groups === undefined ? 0 : data.groups['date']);
+}
+class Vcpkg {
+    root;
+    bin;
+    version;
+    constructor(root, bin, version) {
+        this.root = root;
+        this.bin = bin;
+        this.version = version;
+    }
+    static async create() {
+        const root = getRoot();
+        const bin = getBin(root);
+        const version = await getVersion(bin);
+        return new Vcpkg(root, bin, version);
+    }
+}
+exports["default"] = Vcpkg;
 
 
 /***/ }),
