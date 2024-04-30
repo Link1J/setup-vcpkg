@@ -11,7 +11,7 @@ import Vcpkg from './vcpkg'
 export async function run(): Promise<void> {
   try {
     const vcpkg = await Vcpkg.create()
-    const install_options = ['--no-print-usage', '--clean-after-build']
+    const install_options = ['--no-print-usage']
 
     if (core.getBooleanInput('use-cache')) {
       await cache(vcpkg.version)

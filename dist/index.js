@@ -26298,7 +26298,7 @@ const vcpkg_1 = __importDefault(__nccwpck_require__(7297));
 async function run() {
     try {
         const vcpkg = await vcpkg_1.default.create();
-        const install_options = ['--no-print-usage', '--clean-after-build'];
+        const install_options = ['--no-print-usage'];
         if (core.getBooleanInput('use-cache')) {
             await (0, cache_1.cache)(vcpkg.version);
         }
