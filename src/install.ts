@@ -13,7 +13,7 @@ export async function install(
   core.startGroup('Install Dependencies')
   let extraArgs: string[] = []
 
-  let installLocation = core.getInput('install-location')
+  const installLocation = core.getInput('install-location')
   if (installLocation.length !== 0) {
     extraArgs = [...extraArgs, `--x-install-root="${installLocation}"`]
   }

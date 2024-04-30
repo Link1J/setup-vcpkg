@@ -17,9 +17,9 @@ export async function run(): Promise<void> {
     })()
     let install_options = ['--no-print-usage']
 
-    if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
-      bootstrap(vcpkg_root)
-    }
+    // if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
+    bootstrap(vcpkg_root)
+    // }
     if (core.getBooleanInput('use-cache')) {
       core.exportVariable(
         'ACTIONS_CACHE_URL',
