@@ -11,15 +11,20 @@ branding:
 inputs:
   vcpkg-root:
     description: 'Location of vcpkg'
+    default: ${{ env.VCPKG_INSTALLATION_ROOT }}
     required: true
   use-cache:
     description: 'Use Actions cache'
     default: 'true'
-  preinstall-dependencies:
+  install-dependencies:
     description: 'Install dependencies for project'
     default: 'false'
   install-location:
     description: 'Location to install dependencies'
+
+outputs:
+  toolchain-file:
+    description: 'Location of toolchain file for cmake'
 
 runs:
   using: node20

@@ -1,7 +1,7 @@
 {
   "name": "setup-vcpkg",
   "description": "Setup Vcpkg",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "",
   "private": true,
   "homepage": "https://github.com/link1j/setup-vcpkg",
@@ -66,7 +66,8 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^1.10.1"
+    "@actions/core": "^1.10.1",
+    "@actions/exec": "^1.1.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

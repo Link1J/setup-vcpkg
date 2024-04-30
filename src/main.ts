@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import { bootstrap } from './bootstrap'
+import { install } from './install'
 
 /**
  * The main function for the action.
@@ -7,18 +8,34 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const vcpkg_root = core.getInput('vcpkg-root')
+    if (vcpkg_root != process.env.VCPKG_INSTALLATION_ROOT) {
+      bootstrap(vcpkg_root)
+    }
+    if (core.getBooleanInput('use-cache')) {
+      core.exportVariable(
+        'ACTIONS_CACHE_URL',
+        process.env.ACTIONS_CACHE_URL || ''
+      )
+      core.exportVariable(
+        'ACTIONS_RUNTIME_TOKEN',
+        process.env.ACTIONS_RUNTIME_TOKEN || ''
+      )
+    }
+    if (core.getBooleanInput('install-dependencies')) {
+      install(vcpkg_root)
+    }
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const install_options = '--no-print-usage'
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.exportVariable('VCPKG_ROOT', vcpkg_root)
+    core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options)
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput(
+      'toolchain-file',
+      vcpkg_root + '/scripts/buildsystems/vcpkg.cmake'
+    )
+    core.setOutput('vcpkg-install-options', install_options)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
