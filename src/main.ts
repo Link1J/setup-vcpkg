@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
 
-import { bootstrap } from './bootstrap'
 import { install } from './install'
 import { cache } from './cache'
 import Vcpkg from './vcpkg'
@@ -14,9 +13,6 @@ export async function run(): Promise<void> {
     const vcpkg = await Vcpkg.create()
     const install_options = ['--no-print-usage', '--clean-after-build']
 
-    if (vcpkg.root !== process.env.VCPKG_INSTALLATION_ROOT) {
-      await bootstrap(vcpkg.root)
-    }
     if (core.getBooleanInput('use-cache')) {
       await cache(vcpkg.version)
     }

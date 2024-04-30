@@ -26151,57 +26151,6 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 9996:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.bootstrap = void 0;
-const core = __importStar(__nccwpck_require__(2186));
-const exec = __importStar(__nccwpck_require__(1514));
-const os_1 = __importDefault(__nccwpck_require__(2037));
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
-async function bootstrap(vcpkg_root) {
-    core.startGroup('Bootstrap');
-    const ext = os_1.default.platform() === 'win32' ? '.bat' : '.sh';
-    await exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics']);
-    core.endGroup();
-}
-exports.bootstrap = bootstrap;
-
-
-/***/ }),
-
 /***/ 4810:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -26339,7 +26288,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const bootstrap_1 = __nccwpck_require__(9996);
 const install_1 = __nccwpck_require__(1649);
 const cache_1 = __nccwpck_require__(4810);
 const vcpkg_1 = __importDefault(__nccwpck_require__(7297));
@@ -26351,9 +26299,6 @@ async function run() {
     try {
         const vcpkg = await vcpkg_1.default.create();
         const install_options = ['--no-print-usage', '--clean-after-build'];
-        if (vcpkg.root !== process.env.VCPKG_INSTALLATION_ROOT) {
-            await (0, bootstrap_1.bootstrap)(vcpkg.root);
-        }
         if (core.getBooleanInput('use-cache')) {
             await (0, cache_1.cache)(vcpkg.version);
         }
@@ -26420,6 +26365,13 @@ function getRoot() {
         return out;
     throw new Error('Could not find a valid VCPKG_ROOT');
 }
+async function bootstrap(vcpkg_root) {
+    if (vcpkg_root === process.env.VCPKG_INSTALLATION_ROOT) {
+        return;
+    }
+    const ext = os_1.default.platform() === 'win32' ? '.bat' : '.sh';
+    await exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics']);
+}
 function getBin(root) {
     const ext = os_1.default.platform() === 'win32' ? '.exe' : '';
     return `${root}/vcpkg${ext}`;
@@ -26441,6 +26393,7 @@ class Vcpkg {
     static async create() {
         core.startGroup('Setup');
         const root = getRoot();
+        await bootstrap(root);
         const bin = getBin(root);
         const version = await getVersion(bin);
         core.endGroup();

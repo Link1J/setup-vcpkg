@@ -10,6 +10,15 @@ function getRoot(): string {
   throw new Error('Could not find a valid VCPKG_ROOT')
 }
 
+async function bootstrap(vcpkg_root: string): Promise<void> {
+  if (vcpkg_root === process.env.VCPKG_INSTALLATION_ROOT) {
+    return
+  }
+
+  const ext = os.platform() === 'win32' ? '.bat' : '.sh'
+  await exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics'])
+}
+
 function getBin(root: string): string {
   const ext = os.platform() === 'win32' ? '.exe' : ''
   return `${root}/vcpkg${ext}`
@@ -39,6 +48,7 @@ export default class Vcpkg {
   static async create(): Promise<Vcpkg> {
     core.startGroup('Setup')
     const root = getRoot()
+    await bootstrap(root)
     const bin = getBin(root)
     const version = await getVersion(bin)
     core.endGroup()
