@@ -26197,7 +26197,7 @@ async function bootstrap(vcpkg_root) {
     if (os_1.default.platform() === 'win32') {
         ext = '.bat';
     }
-    exec.exec(vcpkg_root + '/bootstrap-vcpkg' + ext, ['-disableMetrics']);
+    exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics']);
     core.endGroup();
 }
 exports.bootstrap = bootstrap;
@@ -26249,7 +26249,7 @@ async function install(vcpkg_root) {
     core.startGroup('Install Dependencies');
     let installLocation = core.getInput('install-location');
     if (installLocation.length !== 0) {
-        installLocation = '--x-install-root="' + installLocation + '"';
+        installLocation = `--x-install-root="${installLocation}"`;
     }
     let ext = '';
     if (os_1.default.platform() === 'win32') {
@@ -26259,7 +26259,7 @@ async function install(vcpkg_root) {
     if (core.getBooleanInput('use-cache')) {
         cache = '--binarysource="clear;x-gha,readwrite;default,readwrite"';
     }
-    exec.exec(vcpkg_root + '/vcpkg' + ext, [
+    exec.exec(`${vcpkg_root}/vcpkg${ext}`, [
         '--no-print-usage',
         installLocation,
         cache
@@ -26310,7 +26310,15 @@ const install_1 = __nccwpck_require__(1649);
  */
 async function run() {
     try {
-        const vcpkg_root = core.getInput('vcpkg-root');
+        const vcpkg_root = (() => {
+            let out = core.getInput('vcpkg-root');
+            if (out.length !== 0)
+                return out;
+            out = process.env.VCPKG_INSTALLATION_ROOT || '';
+            if (out.length !== 0)
+                return out;
+            throw new Error('Could not find a valid VCPKG_ROOT');
+        })();
         let install_options = '--no-print-usage';
         if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
             (0, bootstrap_1.bootstrap)(vcpkg_root);
@@ -26318,15 +26326,14 @@ async function run() {
         if (core.getBooleanInput('use-cache')) {
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            install_options +=
-                ' ' + '--binarysource="clear;x-gha,readwrite;default,readwrite"';
+            install_options = `${install_options} --binarysource="clear;x-gha,readwrite;default,readwrite"`;
         }
         if (core.getBooleanInput('install-dependencies')) {
             (0, install_1.install)(vcpkg_root);
         }
         core.exportVariable('VCPKG_ROOT', vcpkg_root);
         core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options);
-        core.setOutput('toolchain-file', vcpkg_root + '/scripts/buildsystems/vcpkg.cmake');
+        core.setOutput('toolchain-file', `${vcpkg_root}/scripts/buildsystems/vcpkg.cmake`);
         core.setOutput('vcpkg-install-options', install_options);
     }
     catch (error) {

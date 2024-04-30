@@ -11,7 +11,7 @@ export async function install(vcpkg_root: string): Promise<void> {
 
   let installLocation = core.getInput('install-location')
   if (installLocation.length !== 0) {
-    installLocation = '--x-install-root="' + installLocation + '"'
+    installLocation = `--x-install-root="${installLocation}"`
   }
   let ext = ''
   if (os.platform() === 'win32') {
@@ -22,7 +22,7 @@ export async function install(vcpkg_root: string): Promise<void> {
     cache = '--binarysource="clear;x-gha,readwrite;default,readwrite"'
   }
 
-  exec.exec(vcpkg_root + '/vcpkg' + ext, [
+  exec.exec(`${vcpkg_root}/vcpkg${ext}`, [
     '--no-print-usage',
     installLocation,
     cache

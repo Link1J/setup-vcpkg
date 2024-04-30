@@ -11,8 +11,6 @@ branding:
 inputs:
   vcpkg-root:
     description: 'Location of vcpkg'
-    default: ${{ env.VCPKG_INSTALLATION_ROOT }}
-    required: true
   use-cache:
     description: 'Use Actions cache'
     default: 'true'

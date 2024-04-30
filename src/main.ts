@@ -8,7 +8,13 @@ import { install } from './install'
  */
 export async function run(): Promise<void> {
   try {
-    const vcpkg_root = core.getInput('vcpkg-root')
+    const vcpkg_root = (() => {
+      let out = core.getInput('vcpkg-root')
+      if (out.length !== 0) return out
+      out = process.env.VCPKG_INSTALLATION_ROOT || ''
+      if (out.length !== 0) return out
+      throw new Error('Could not find a valid VCPKG_ROOT')
+    })()
     let install_options = '--no-print-usage'
 
     if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
@@ -23,8 +29,7 @@ export async function run(): Promise<void> {
         'ACTIONS_RUNTIME_TOKEN',
         process.env.ACTIONS_RUNTIME_TOKEN || ''
       )
-      install_options +=
-        ' ' + '--binarysource="clear;x-gha,readwrite;default,readwrite"'
+      install_options = `${install_options} --binarysource="clear;x-gha,readwrite;default,readwrite"`
     }
     if (core.getBooleanInput('install-dependencies')) {
       install(vcpkg_root)
@@ -35,7 +40,7 @@ export async function run(): Promise<void> {
 
     core.setOutput(
       'toolchain-file',
-      vcpkg_root + '/scripts/buildsystems/vcpkg.cmake'
+      `${vcpkg_root}/scripts/buildsystems/vcpkg.cmake`
     )
     core.setOutput('vcpkg-install-options', install_options)
   } catch (error) {
