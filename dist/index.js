@@ -26245,7 +26245,7 @@ const os_1 = __importDefault(__nccwpck_require__(2037));
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
-async function install(vcpkg_root) {
+async function install(vcpkg_root, args) {
     core.startGroup('Install Dependencies');
     let installLocation = core.getInput('install-location');
     if (installLocation.length !== 0) {
@@ -26255,15 +26255,7 @@ async function install(vcpkg_root) {
     if (os_1.default.platform() === 'win32') {
         ext = '.exe';
     }
-    let cache = '';
-    if (core.getBooleanInput('use-cache')) {
-        cache = '--binarysource="clear;x-gha,readwrite;default,readwrite"';
-    }
-    exec.exec(`${vcpkg_root}/vcpkg${ext}`, [
-        '--no-print-usage',
-        installLocation,
-        cache
-    ]);
+    exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, installLocation]);
     core.endGroup();
 }
 exports.install = install;
@@ -26319,17 +26311,20 @@ async function run() {
                 return out;
             throw new Error('Could not find a valid VCPKG_ROOT');
         })();
-        let install_options = '--no-print-usage';
+        let install_options = ['--no-print-usage'];
         if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
             (0, bootstrap_1.bootstrap)(vcpkg_root);
         }
         if (core.getBooleanInput('use-cache')) {
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-            install_options = `${install_options} --binarysource="clear;x-gha,readwrite;default,readwrite"`;
+            install_options = [
+                ...install_options,
+                '--binarysource="clear;x-gha,readwrite;default,readwrite"'
+            ];
         }
         if (core.getBooleanInput('install-dependencies')) {
-            (0, install_1.install)(vcpkg_root);
+            (0, install_1.install)(vcpkg_root, install_options);
         }
         core.exportVariable('VCPKG_ROOT', vcpkg_root);
         core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options);

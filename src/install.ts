@@ -6,7 +6,10 @@ import os from 'os'
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
-export async function install(vcpkg_root: string): Promise<void> {
+export async function install(
+  vcpkg_root: string,
+  args: string[]
+): Promise<void> {
   core.startGroup('Install Dependencies')
 
   let installLocation = core.getInput('install-location')
@@ -17,15 +20,6 @@ export async function install(vcpkg_root: string): Promise<void> {
   if (os.platform() === 'win32') {
     ext = '.exe'
   }
-  let cache = ''
-  if (core.getBooleanInput('use-cache')) {
-    cache = '--binarysource="clear;x-gha,readwrite;default,readwrite"'
-  }
-
-  exec.exec(`${vcpkg_root}/vcpkg${ext}`, [
-    '--no-print-usage',
-    installLocation,
-    cache
-  ])
+  exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, installLocation])
   core.endGroup()
 }
