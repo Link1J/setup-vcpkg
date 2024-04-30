@@ -26247,15 +26247,16 @@ const os_1 = __importDefault(__nccwpck_require__(2037));
  */
 async function install(vcpkg_root, args) {
     core.startGroup('Install Dependencies');
+    let extraArgs = [];
     let installLocation = core.getInput('install-location');
     if (installLocation.length !== 0) {
-        installLocation = `--x-install-root="${installLocation}"`;
+        extraArgs = [...extraArgs, `--x-install-root="${installLocation}"`];
     }
     let ext = '';
     if (os_1.default.platform() === 'win32') {
         ext = '.exe';
     }
-    exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, installLocation]);
+    exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, ...extraArgs]);
     core.endGroup();
 }
 exports.install = install;
