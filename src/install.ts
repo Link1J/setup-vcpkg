@@ -21,6 +21,8 @@ export async function install(
   if (os.platform() === 'win32') {
     ext = '.exe'
   }
-  exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, ...extraArgs])
+  exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, ...extraArgs], {
+    listeners: { stdline: buffer => core.info(buffer) }
+  })
   core.endGroup()
 }

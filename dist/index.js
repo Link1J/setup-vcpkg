@@ -26197,7 +26197,9 @@ async function bootstrap(vcpkg_root) {
     if (os_1.default.platform() === 'win32') {
         ext = '.bat';
     }
-    exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics']);
+    exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics'], {
+        listeners: { stdline: buffer => core.info(buffer) }
+    });
     core.endGroup();
 }
 exports.bootstrap = bootstrap;
@@ -26256,7 +26258,9 @@ async function install(vcpkg_root, args) {
     if (os_1.default.platform() === 'win32') {
         ext = '.exe';
     }
-    exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, ...extraArgs]);
+    exec.exec(`${vcpkg_root}/vcpkg${ext}`, ['install', ...args, ...extraArgs], {
+        listeners: { stdline: buffer => core.info(buffer) }
+    });
     core.endGroup();
 }
 exports.install = install;

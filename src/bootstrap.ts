@@ -12,6 +12,8 @@ export async function bootstrap(vcpkg_root: string): Promise<void> {
   if (os.platform() === 'win32') {
     ext = '.bat'
   }
-  exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics'])
+  exec.exec(`${vcpkg_root}/bootstrap-vcpkg${ext}`, ['-disableMetrics'], {
+    listeners: { stdline: buffer => core.info(buffer) }
+  })
   core.endGroup()
 }
