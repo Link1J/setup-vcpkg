@@ -9,7 +9,9 @@ import { install } from './install'
 export async function run(): Promise<void> {
   try {
     const vcpkg_root = core.getInput('vcpkg-root')
-    if (vcpkg_root != process.env.VCPKG_INSTALLATION_ROOT) {
+    let install_options = '--no-print-usage'
+
+    if (vcpkg_root !== process.env.VCPKG_INSTALLATION_ROOT) {
       bootstrap(vcpkg_root)
     }
     if (core.getBooleanInput('use-cache')) {
@@ -21,12 +23,12 @@ export async function run(): Promise<void> {
         'ACTIONS_RUNTIME_TOKEN',
         process.env.ACTIONS_RUNTIME_TOKEN || ''
       )
+      install_options +=
+        ' ' + '--binarysource="clear;x-gha,readwrite;default,readwrite"'
     }
     if (core.getBooleanInput('install-dependencies')) {
       install(vcpkg_root)
     }
-
-    const install_options = '--no-print-usage'
 
     core.exportVariable('VCPKG_ROOT', vcpkg_root)
     core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options)

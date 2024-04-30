@@ -10,11 +10,11 @@ export async function install(vcpkg_root: string): Promise<void> {
   core.startGroup('Install Dependencies')
 
   let installLocation = core.getInput('install-location')
-  if (installLocation.length != 0) {
+  if (installLocation.length !== 0) {
     installLocation = '--x-install-root="' + installLocation + '"'
   }
   let ext = ''
-  if (os.platform() == 'win32') {
+  if (os.platform() === 'win32') {
     ext = '.exe'
   }
   let cache = ''

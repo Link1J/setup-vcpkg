@@ -9,7 +9,7 @@ import os from 'os'
 export async function bootstrap(vcpkg_root: string): Promise<void> {
   core.startGroup('Bootstrap')
   let ext = '.sh'
-  if (os.platform() == 'win32') {
+  if (os.platform() === 'win32') {
     ext = '.bat'
   }
   exec.exec(vcpkg_root + '/bootstrap-vcpkg' + ext, ['-disableMetrics'])
