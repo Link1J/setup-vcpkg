@@ -26248,8 +26248,11 @@ async function install(vcpkg_bin, args) {
     let extraArgs = [];
     const installLocation = core.getInput('install-location');
     if (installLocation.length !== 0) {
-        extraArgs = [...extraArgs, `--x-install-root="${installLocation}"`];
+        extraArgs = [...extraArgs, `--x-install-root=${installLocation}`];
         core.setOutput('install-location', installLocation);
+    }
+    else {
+        core.setOutput('install-location', `${process.cwd()}/vcpkg_installed`);
     }
     await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs]);
     core.endGroup();
