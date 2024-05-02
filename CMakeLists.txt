@@ -1,3 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(setup_vcpkg VERSION 0.0.0 LANGUAGES C CXX)
-find_package(glm CONFIG REQUIRED)
+message(STATUS "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+message(STATUS "_VCPKG_INSTALLED_DIR: ${_VCPKG_INSTALLED_DIR}")
+find_package(glm REQUIRED)
