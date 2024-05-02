@@ -99,3 +99,34 @@ jobs:
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
           }} -DVCPKG_MANIFEST_INSTALL=ON
+  
+  test-action-with-cmake-preinstall-git:
+    name: GitHub Actions Test (CMake Preinstalled) [Vcpkg Git]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout Vcpkg
+        id: checkout-vcpkg
+        uses: actions/checkout@v4
+        with:
+          repository: microsoft/vcpkg
+          path: vcpkg
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        with:
+          vcpkg-root: ${{ github.workspace }}/vcpkg
+          install-dependencies: true
+          install-location: ${{ github.workspace }}/.vcpkg-data/
+
+      - name: Configure CMake
+        run: >
+          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
+          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
+          -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
+          }} -DVCPKG_MANIFEST_INSTALL=ON
