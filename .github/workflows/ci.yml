@@ -111,13 +111,15 @@ jobs:
           install-dependencies: true
           install-location: ${{ github.workspace }}/.vcpkg-data/
 
+      - name: Tree
+        run: tree ${{ steps.test-action.outputs.install-location }}
+
       - name: Configure CMake
         run: >
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=OFF -DVCPKG_TRACE_FIND_PACKAGE=ON
-          --trace-expand
+          }} -DVCPKG_MANIFEST_INSTALL=OFF
 
   test-action-with-cmake-preinstall-git:
     name: GitHub Actions Test (CMake Preinstalled) [Vcpkg Git]
@@ -143,10 +145,12 @@ jobs:
           install-dependencies: true
           install-location: ${{ github.workspace }}/.vcpkg-data/
 
+      - name: Tree
+        run: tree ${{ steps.test-action.outputs.install-location }}
+
       - name: Configure CMake
         run: >
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=ON -DVCPKG_TRACE_FIND_PACKAGE=ON
-          --trace-expand
+          }} -DVCPKG_MANIFEST_INSTALL=OFF
