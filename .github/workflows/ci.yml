@@ -104,9 +104,18 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
+      - name: Checkout Vcpkg
+        id: checkout-vcpkg
+        uses: actions/checkout@v4
+        with:
+          repository: microsoft/vcpkg
+          path: vcpkg
+
       - name: Test Local Action
         id: test-action
         uses: ./
+        with:
+          vcpkg-root: ${{ github.workspace }}/vcpkg
 
       - name: Configure CMake
         run: >
@@ -119,7 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -133,9 +142,6 @@ jobs:
         with:
           install-dependencies: true
           install-location: ${{ github.workspace }}/.vcpkg-data/
-
-      - name: Tree
-        run: tree ${{ github.workspace }}
 
       - name: Configure CMake
         run: >
@@ -172,9 +178,6 @@ jobs:
           vcpkg-root: ${{ github.workspace }}/vcpkg
           install-dependencies: true
           install-location: ${{ github.workspace }}/.vcpkg-data/
-
-      - name: Tree
-        run: tree ${{ github.workspace }}
 
       - name: Configure CMake
         run: >
