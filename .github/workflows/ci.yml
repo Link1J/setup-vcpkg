@@ -59,6 +59,9 @@ jobs:
         with:
           install-dependencies: true
 
+      - name: Tree
+        run: tree ${{ github.workspace }}
+
   test-action-with-cmake:
     name: GitHub Actions Test (CMake)
     runs-on: ubuntu-latest
@@ -112,7 +115,7 @@ jobs:
           install-location: ${{ github.workspace }}/.vcpkg-data/
 
       - name: Tree
-        run: tree ${{ steps.test-action.outputs.install-location }}
+        run: tree ${{ github.workspace }}
 
       - name: Configure CMake
         run: >
@@ -146,7 +149,7 @@ jobs:
           install-location: ${{ github.workspace }}/.vcpkg-data/
 
       - name: Tree
-        run: tree ${{ steps.test-action.outputs.install-location }}
+        run: tree ${{ github.workspace }}
 
       - name: Configure CMake
         run: >
