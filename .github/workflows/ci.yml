@@ -71,6 +71,24 @@ jobs:
       - name: Test Local Action
         id: test-action
         uses: ./
+
+      - name: Configure CMake
+        run: >
+          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
+          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
+
+  test-action-with-cmake-preinstall:
+    name: GitHub Actions Test (CMake Preinstalled)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
         with:
           install-dependencies: true
           install-location: ${{ github.workspace }}/.vcpkg-data/
@@ -80,4 +98,4 @@ jobs:
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=OFF
+          }} -DVCPKG_MANIFEST_INSTALL=ON
