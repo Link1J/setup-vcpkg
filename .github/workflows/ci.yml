@@ -98,8 +98,8 @@ jobs:
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=ON
-  
+          }} -DVCPKG_MANIFEST_INSTALL=OFF
+
   test-action-with-cmake-preinstall-git:
     name: GitHub Actions Test (CMake Preinstalled) [Vcpkg Git]
     runs-on: ubuntu-latest
@@ -129,4 +129,4 @@ jobs:
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=ON
+          }} -DVCPKG_MANIFEST_INSTALL=OFF
