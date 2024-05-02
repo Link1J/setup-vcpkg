@@ -76,8 +76,7 @@ jobs:
 
       - name: Configure CMake
         run: >
-          cmake -G Ninja -S ${{ github.workspace }} -B ${{ github.workspace
-          }}/build -DCMAKE_TOOLCHAIN_FILE=${{
-          steps.test-action.outputs.toolchain-file }}
+          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
+          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
           -DVCPKG_MANIFEST_INSTALL=OFF -DVCPKG_INSTALLED_DIR=${{
           steps.test-action.outputs.install-location }}
