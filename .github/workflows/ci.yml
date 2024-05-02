@@ -73,10 +73,11 @@ jobs:
         uses: ./
         with:
           install-dependencies: true
+          install-location: ${{ github.workspace }}/.vcpkg-data/
 
       - name: Configure CMake
         run: >
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
-          -DVCPKG_MANIFEST_INSTALL=OFF -DVCPKG_INSTALLED_DIR=${{
-          steps.test-action.outputs.install-location }}
+          -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
+          }} -DVCPKG_MANIFEST_INSTALL=OFF
