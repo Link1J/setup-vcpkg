@@ -77,6 +77,24 @@ jobs:
           cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
 
+  test-action-with-cmake-git:
+    name: GitHub Actions Test (CMake) [Vcpkg Git]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+
+      - name: Configure CMake
+        run: >
+          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
+          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
+
   test-action-with-cmake-preinstall:
     name: GitHub Actions Test (CMake Preinstalled)
     runs-on: ubuntu-latest
