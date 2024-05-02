@@ -58,3 +58,26 @@ jobs:
         uses: ./
         with:
           install-dependencies: true
+
+  test-action-with-cmake:
+    name: GitHub Actions Test (CMake)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Test Local Action
+        id: test-action
+        uses: ./
+        with:
+          install-dependencies: true
+
+      - name: Configure CMake
+        run: >
+          cmake -G Ninja -S ${{ github.workspace }} -B ${{ github.workspace
+          }}/build -DCMAKE_TOOLCHAIN_FILE=${{
+          steps.test-action.outputs.toolchain-file }}
+          -DVCPKG_MANIFEST_INSTALL=OFF -DVCPKG_INSTALLED_DIR=${{
+          steps.test-action.outputs.install-location }}

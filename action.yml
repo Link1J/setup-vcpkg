@@ -23,6 +23,8 @@ inputs:
 outputs:
   toolchain-file:
     description: 'Location of toolchain file for cmake'
+  install-location:
+    description: 'Location of installed dependencies'
 
 runs:
   using: node20

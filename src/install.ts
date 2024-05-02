@@ -15,6 +15,7 @@ export async function install(
   const installLocation = core.getInput('install-location')
   if (installLocation.length !== 0) {
     extraArgs = [...extraArgs, `--x-install-root="${installLocation}"`]
+    core.setOutput('install-location', installLocation)
   }
   await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs])
   core.endGroup()

@@ -26245,6 +26245,7 @@ async function install(vcpkg_bin, args) {
     const installLocation = core.getInput('install-location');
     if (installLocation.length !== 0) {
         extraArgs = [...extraArgs, `--x-install-root="${installLocation}"`];
+        core.setOutput('install-location', installLocation);
     }
     await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs]);
     core.endGroup();
@@ -26299,15 +26300,15 @@ async function run() {
     try {
         const vcpkg = await vcpkg_1.default.create();
         const install_options = ['--no-print-usage'];
+        core.exportVariable('VCPKG_ROOT', vcpkg.root);
+        core.setOutput('toolchain-file', `${vcpkg.root}/scripts/buildsystems/vcpkg.cmake`);
         if (core.getBooleanInput('use-cache')) {
             await (0, cache_1.cache)(vcpkg.version);
         }
         if (core.getBooleanInput('install-dependencies')) {
             await (0, install_1.install)(vcpkg.bin, install_options);
         }
-        core.exportVariable('VCPKG_ROOT', vcpkg.root);
         core.exportVariable('VCPKG_INSTALL_OPTIONS', install_options);
-        core.setOutput('toolchain-file', `${vcpkg.root}/scripts/buildsystems/vcpkg.cmake`);
         core.setOutput('vcpkg-install-options', install_options);
     }
     catch (error) {
