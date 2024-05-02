@@ -46,7 +46,11 @@ jobs:
 
   test-action:
     name: GitHub Actions Test
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -64,7 +68,11 @@ jobs:
 
   test-action-with-cmake:
     name: GitHub Actions Test (CMake)
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -82,7 +90,11 @@ jobs:
 
   test-action-with-cmake-git:
     name: GitHub Actions Test (CMake) [Vcpkg Git]
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -100,7 +112,11 @@ jobs:
 
   test-action-with-cmake-preinstall:
     name: GitHub Actions Test (CMake Preinstalled)
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -126,7 +142,11 @@ jobs:
 
   test-action-with-cmake-preinstall-git:
     name: GitHub Actions Test (CMake Preinstalled) [Vcpkg Git]
-    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
