@@ -26180,7 +26180,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.cache = void 0;
+exports.cache = cache;
 const core = __importStar(__nccwpck_require__(2186));
 /**
  * The main function for the action.
@@ -26202,7 +26202,6 @@ async function cache(vcpkg_version) {
     }
     core.endGroup();
 }
-exports.cache = cache;
 
 
 /***/ }),
@@ -26236,7 +26235,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.install = void 0;
+exports.install = install;
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 /**
@@ -26257,7 +26256,6 @@ async function install(vcpkg_bin, args) {
     await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs]);
     core.endGroup();
 }
-exports.install = install;
 
 
 /***/ }),
@@ -26294,7 +26292,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 const core = __importStar(__nccwpck_require__(2186));
 const install_1 = __nccwpck_require__(1649);
 const cache_1 = __nccwpck_require__(4810);
@@ -26324,7 +26322,6 @@ async function run() {
             core.setFailed(error.message);
     }
 }
-exports.run = run;
 
 
 /***/ }),
