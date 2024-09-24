@@ -67,14 +67,16 @@
   },
   "dependencies": {
     "@actions/core": "^1.10.1",
-    "@actions/exec": "^1.1.1"
+    "@actions/exec": "^1.1.1",
+    "setup-vcpkg": "file:"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@stylistic/eslint-plugin-ts": "^2.8.0",
     "@types/jest": "^29.5.13",
     "@types/node": "^22.5.5",
-    "@typescript-eslint/eslint-plugin": "^8.6.0",
-    "@typescript-eslint/parser": "^8.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^8.57.1",
     "eslint-plugin-github": "^5.0.2",
