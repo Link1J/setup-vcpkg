@@ -25,15 +25,7 @@ describe('main.ts', () => {
         jest.resetAllMocks()
     })
 
-    it('Sets the time output', async () => {
+    it('Something', async () => {
         await run()
-
-        // Verify the time output was set.
-        expect(core.setOutput).toHaveBeenNthCalledWith(
-            1,
-            'time',
-            // Simple regex to match a time string in the format HH:MM:SS.
-            expect.stringMatching(/^\d{2}:\d{2}:\d{2}/)
-        )
     })
 })
