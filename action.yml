@@ -1,31 +1,31 @@
-name: 'Setup VCPKG'
-description: 'Setup VCPKG'
-author: 'Jared Irwin'
+name: Setup VCPKG
+description: Setup VCPKG
+author: Jared Irwin
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: 'code'
-  color: 'purple'
+    icon: code
+    color: purple
 
 # Define your inputs here.
 inputs:
-  vcpkg-root:
-    description: 'Location of vcpkg'
-  use-cache:
-    description: 'Use Actions cache'
-    default: 'true'
-  install-dependencies:
-    description: 'Install dependencies for project'
-    default: 'false'
-  install-location:
-    description: 'Location to install dependencies'
+    vcpkg-root:
+        description: Location of vcpkg
+    use-cache:
+        description: Use Actions cache
+        default: 'true'
+    install-dependencies:
+        description: Install dependencies for project
+        default: 'false'
+    install-location:
+        description: Location to install dependencies
 
 outputs:
-  toolchain-file:
-    description: 'Location of toolchain file for cmake'
-  install-location:
-    description: 'Location of installed dependencies'
+    toolchain-file:
+        description: Location of toolchain file for cmake
+    install-location:
+        description: Location of installed dependencies
 
 runs:
-  using: node20
-  main: dist/index.js
+    using: node20
+    main: dist/index.js

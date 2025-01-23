@@ -6,19 +6,19 @@ import * as exec from '@actions/exec'
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 export async function install(
-  vcpkg_bin: string,
-  args: string[]
+    vcpkg_bin: string,
+    args: string[]
 ): Promise<void> {
-  core.startGroup('Install Dependencies')
-  let extraArgs: string[] = []
+    core.startGroup('Install Dependencies')
+    let extraArgs: string[] = []
 
-  const installLocation = core.getInput('install-location')
-  if (installLocation.length !== 0) {
-    extraArgs = [...extraArgs, `--x-install-root=${installLocation}`]
-    core.setOutput('install-location', installLocation)
-  } else {
-    core.setOutput('install-location', `${process.cwd()}/vcpkg_installed`)
-  }
-  await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs])
-  core.endGroup()
+    const installLocation = core.getInput('install-location')
+    if (installLocation.length !== 0) {
+        extraArgs = [...extraArgs, `--x-install-root=${installLocation}`]
+        core.setOutput('install-location', installLocation)
+    } else {
+        core.setOutput('install-location', `${process.cwd()}/vcpkg_installed`)
+    }
+    await exec.exec(vcpkg_bin, ['install', ...args, ...extraArgs])
+    core.endGroup()
 }

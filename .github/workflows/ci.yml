@@ -1,187 +1,193 @@
 name: Continuous Integration
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
+    pull_request:
+        branches:
+            - main
+    push:
+        branches:
+            - main
 
 permissions:
-  contents: read
+    contents: read
 
 jobs:
-  test-typescript:
-    name: TypeScript Tests
-    runs-on: ubuntu-latest
+    test-typescript:
+        name: TypeScript Tests
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: npm
+            - name: Setup Node.js
+              id: setup-node
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: .node-version
+                  cache: npm
 
-      - name: Install Dependencies
-        id: npm-ci
-        run: npm ci
+            - name: Install Dependencies
+              id: npm-ci
+              run: npm ci
 
-      - name: Check Format
-        id: npm-format-check
-        run: npm run format:check
+            - name: Check Format
+              id: npm-format-check
+              run: npm run format:check
 
-      - name: Lint
-        id: npm-lint
-        run: npm run lint
+            - name: Lint
+              id: npm-lint
+              run: npm run lint
 
-      - name: Test
-        id: npm-ci-test
-        run: npm run ci-test
+            - name: Test
+              id: npm-ci-test
+              run: npm run ci-test
 
-  test-action:
-    name: GitHub Actions Test
+    test-action:
+        name: GitHub Actions Test
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
 
-      - name: Test Local Action
-        id: test-action
-        uses: ./
-        with:
-          install-dependencies: true
+            - name: Test Local Action
+              id: test-action
+              uses: ./
+              with:
+                  install-dependencies: true
 
-      - name: Tree
-        run: tree ${{ github.workspace }}
+            - name: Tree
+              run: tree ${{ github.workspace }}
 
-  test-action-with-cmake:
-    name: GitHub Actions Test (CMake)
+    test-action-with-cmake:
+        name: GitHub Actions Test (CMake)
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
 
-      - name: Test Local Action
-        id: test-action
-        uses: ./
+            - name: Test Local Action
+              id: test-action
+              uses: ./
 
-      - name: Configure CMake
-        run: >
-          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
-          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
+            - name: Configure CMake
+              run: >
+                  cmake -S ${{ github.workspace }} -B ${{ github.workspace
+                  }}/build -DCMAKE_TOOLCHAIN_FILE=${{
+                  steps.test-action.outputs.toolchain-file }}
 
-  test-action-with-cmake-git:
-    name: GitHub Actions Test (CMake) [Vcpkg Git]
+    test-action-with-cmake-git:
+        name: GitHub Actions Test (CMake) [Vcpkg Git]
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
 
-      - name: Checkout Vcpkg
-        id: checkout-vcpkg
-        uses: actions/checkout@v4
-        with:
-          repository: microsoft/vcpkg
-          path: vcpkg
+            - name: Checkout Vcpkg
+              id: checkout-vcpkg
+              uses: actions/checkout@v4
+              with:
+                  repository: microsoft/vcpkg
+                  path: vcpkg
 
-      - name: Test Local Action
-        id: test-action
-        uses: ./
-        with:
-          vcpkg-root: ${{ github.workspace }}/vcpkg
+            - name: Test Local Action
+              id: test-action
+              uses: ./
+              with:
+                  vcpkg-root: ${{ github.workspace }}/vcpkg
 
-      - name: Configure CMake
-        run: >
-          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
-          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
+            - name: Configure CMake
+              run: >
+                  cmake -S ${{ github.workspace }} -B ${{ github.workspace
+                  }}/build -DCMAKE_TOOLCHAIN_FILE=${{
+                  steps.test-action.outputs.toolchain-file }}
 
-  test-action-with-cmake-preinstall:
-    name: GitHub Actions Test (CMake Preinstalled)
+    test-action-with-cmake-preinstall:
+        name: GitHub Actions Test (CMake Preinstalled)
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
 
-      - name: Test Local Action
-        id: test-action
-        uses: ./
-        with:
-          install-dependencies: true
-          install-location: ${{ github.workspace }}/.vcpkg-data/
+            - name: Test Local Action
+              id: test-action
+              uses: ./
+              with:
+                  install-dependencies: true
+                  install-location: ${{ github.workspace }}/.vcpkg-data/
 
-      - name: Configure CMake
-        run: >
-          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
-          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
-          -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=OFF
+            - name: Configure CMake
+              run: >
+                  cmake -S ${{ github.workspace }} -B ${{ github.workspace
+                  }}/build -DCMAKE_TOOLCHAIN_FILE=${{
+                  steps.test-action.outputs.toolchain-file }}
+                  -DVCPKG_INSTALLED_DIR=${{
+                  steps.test-action.outputs.install-location }}
+                  -DVCPKG_MANIFEST_INSTALL=OFF
 
-  test-action-with-cmake-preinstall-git:
-    name: GitHub Actions Test (CMake Preinstalled) [Vcpkg Git]
+    test-action-with-cmake-preinstall-git:
+        name: GitHub Actions Test (CMake Preinstalled) [Vcpkg Git]
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
 
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
 
-      - name: Checkout Vcpkg
-        id: checkout-vcpkg
-        uses: actions/checkout@v4
-        with:
-          repository: microsoft/vcpkg
-          path: vcpkg
+            - name: Checkout Vcpkg
+              id: checkout-vcpkg
+              uses: actions/checkout@v4
+              with:
+                  repository: microsoft/vcpkg
+                  path: vcpkg
 
-      - name: Test Local Action
-        id: test-action
-        uses: ./
-        with:
-          vcpkg-root: ${{ github.workspace }}/vcpkg
-          install-dependencies: true
-          install-location: ${{ github.workspace }}/.vcpkg-data/
+            - name: Test Local Action
+              id: test-action
+              uses: ./
+              with:
+                  vcpkg-root: ${{ github.workspace }}/vcpkg
+                  install-dependencies: true
+                  install-location: ${{ github.workspace }}/.vcpkg-data/
 
-      - name: Configure CMake
-        run: >
-          cmake -S ${{ github.workspace }} -B ${{ github.workspace }}/build
-          -DCMAKE_TOOLCHAIN_FILE=${{ steps.test-action.outputs.toolchain-file }}
-          -DVCPKG_INSTALLED_DIR=${{ steps.test-action.outputs.install-location
-          }} -DVCPKG_MANIFEST_INSTALL=OFF
+            - name: Configure CMake
+              run: >
+                  cmake -S ${{ github.workspace }} -B ${{ github.workspace
+                  }}/build -DCMAKE_TOOLCHAIN_FILE=${{
+                  steps.test-action.outputs.toolchain-file }}
+                  -DVCPKG_INSTALLED_DIR=${{
+                  steps.test-action.outputs.install-location }}
+                  -DVCPKG_MANIFEST_INSTALL=OFF
