@@ -19,7 +19,7 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Setup Node.js
               id: setup-node
@@ -56,7 +56,7 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Test Local Action
               id: test-action
@@ -79,7 +79,7 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Test Local Action
               id: test-action
@@ -103,11 +103,11 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Checkout Vcpkg
               id: checkout-vcpkg
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                   repository: microsoft/vcpkg
                   path: vcpkg
@@ -136,7 +136,7 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Test Local Action
               id: test-action
@@ -166,11 +166,11 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Checkout Vcpkg
               id: checkout-vcpkg
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                   repository: microsoft/vcpkg
                   path: vcpkg
