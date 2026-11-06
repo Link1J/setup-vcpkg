@@ -21,7 +21,7 @@
         ".": "./dist/index.js"
     },
     "engines": {
-        "node": ">=20"
+        "node": ">=24"
     },
     "scripts": {
         "bundle": "npm run format:write && npm run package",
@@ -38,8 +38,8 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@actions/core": "^1.11.1",
-        "@actions/exec": "^1.1.1",
+        "@actions/core": "^3.0.1",
+        "@actions/exec": "^3.0.0",
         "setup-vcpkg": "file:"
     },
     "devDependencies": {
