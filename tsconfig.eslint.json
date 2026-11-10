@@ -4,7 +4,7 @@
     "compilerOptions": {
         "allowJs": true,
         "noEmit": true,
-        "rootDir": "./src",
+        "rootDir": "./src"
     },
     "exclude": ["dist", "node_modules"],
     "include": [
