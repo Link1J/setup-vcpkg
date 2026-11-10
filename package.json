@@ -43,7 +43,7 @@
         "setup-vcpkg": "file:"
     },
     "devDependencies": {
-        "@eslint/compat": "^1.2.6",
+        "@eslint/compat": "^2.1.1",
         "@github/local-action": "^2.5.1",
         "@jest/globals": "^30.5.2",
         "@rollup/plugin-commonjs": "^29.0.3",
