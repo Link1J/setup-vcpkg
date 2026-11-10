@@ -5,7 +5,8 @@
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "types": ["node"]
     },
     "exclude": [
         "__fixtures__",
